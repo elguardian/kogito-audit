@@ -18,22 +18,23 @@ package org.kie.kogito.audit.transport.streams;
 
 import static org.kie.kogito.audit.transport.streams.Transport.KOGITO_PROCESS_INSTANCES_EVENTS;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Message;
-import org.kie.kogito.audit.event.engine.ProcessInstanceErrorEvent;
-import org.kie.kogito.audit.event.engine.ProcessInstanceEvent;
-import org.kie.kogito.audit.event.engine.ProcessInstanceNodeEvent;
-import org.kie.kogito.audit.event.engine.ProcessInstanceVariableEvent;
-import org.kie.kogito.audit.event.job.JobExecutorEvent;
-import org.kie.kogito.audit.event.usertask.TaskInstanceEvent;
-import org.kie.kogito.audit.event.usertask.TaskInstanceVariableEvent;
-import org.kie.kogito.audit.service.index.engine.ProcessInstanceHistoryService;
-import org.kie.kogito.audit.service.index.job.JobHistoryService;
-import org.kie.kogito.audit.service.index.usertask.UserTaskHistoryService;
+import org.kie.kogito.audit.event.JobExecutorEvent;
+import org.kie.kogito.audit.event.ProcessInstanceErrorEvent;
+import org.kie.kogito.audit.event.ProcessInstanceEvent;
+import org.kie.kogito.audit.event.ProcessInstanceNodeEvent;
+import org.kie.kogito.audit.event.ProcessInstanceVariableEvent;
+import org.kie.kogito.audit.event.TaskInstanceEvent;
+import org.kie.kogito.audit.service.JobHistoryService;
+import org.kie.kogito.audit.service.ProcessInstanceHistoryService;
+import org.kie.kogito.audit.service.UserTaskHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,66 +42,70 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.smallrye.common.annotation.NonBlocking;
-import io.smallrye.mutiny.Uni;
 
 @ApplicationScoped
 public class MessagingEventConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessagingEventConsumer.class);
 
-    @Inject 
+    @Inject
     protected ObjectMapper mapper;
-    
-    @Inject 
+
+    @Inject
     protected ProcessInstanceHistoryService processInstanceHistoryService;
-    
+
     @Inject
     protected JobHistoryService jobHistoryService;
-    
+
     @Inject
     protected UserTaskHistoryService userTaskHistoryService;
-    
+
     @Incoming(KOGITO_PROCESS_INSTANCES_EVENTS)
     @NonBlocking
     @Transactional
-    public Uni<Void> onProcessInstanceEvent(Message<JsonNode> event) throws IllegalArgumentException, ClassNotFoundException {
+    public void onSystemEvent(JsonNode event) throws IllegalArgumentException, ClassNotFoundException {
         LOGGER.debug("Node instance consumer received ProcessInstanceDataEvent: \n{}", event);
-        return Uni.createFrom().item(event)
-                .invoke(this::execute)
-                .onFailure()
-                .invoke(t -> LOGGER.error("Error processing process instance ProInstanceDataEvent: {}", t.getMessage(), t))
-                .onItem().ignore().andContinueWithNull();
+        List<JsonNode> objects = new ArrayList<>();
 
+        if (!event.isArray()) {
+            objects.add(event);
+        } else {
+            for (int i = 0; i < event.size(); i++) {
+                objects.add(event.get(i));
+            }
+        }
+
+        objects.stream().forEach(this::execute);
     }
 
-    private void execute(Message<JsonNode> event) {
-        String type = event.getPayload().get("@type").asText();
-        LOGGER.info("onProcessInstanceEvent: {}\n", event.getPayload());
+    private void execute(JsonNode event) {
+        String type = event.get("@type").asText();
+        LOGGER.info("onProcessInstanceEvent: {}", event);
 
-        switch(type) {
+        switch (type) {
             case "ProcessInstanceErrorEvent":
-                processInstanceHistoryService.index(transfromTo(ProcessInstanceErrorEvent.class, event.getPayload()));
+                processInstanceHistoryService.index(transfromTo(ProcessInstanceErrorEvent.class, event));
                 break;
             case "ProcessInstanceEvent":
-                processInstanceHistoryService.index(transfromTo(ProcessInstanceEvent.class, event.getPayload()));
+                processInstanceHistoryService.index(transfromTo(ProcessInstanceEvent.class, event));
                 break;
             case "ProcessInstanceNodeEvent":
-                processInstanceHistoryService.index(transfromTo(ProcessInstanceNodeEvent.class, event.getPayload()));
+                processInstanceHistoryService.index(transfromTo(ProcessInstanceNodeEvent.class, event));
                 break;
             case "ProcessInstanceVariableEvent":
-                processInstanceHistoryService.index(transfromTo(ProcessInstanceVariableEvent.class, event.getPayload()));
+                processInstanceHistoryService.index(transfromTo(ProcessInstanceVariableEvent.class, event));
                 break;
             case "JobExecutorEvent":
-                jobHistoryService.index(transfromTo(JobExecutorEvent.class, event.getPayload()));
+                jobHistoryService.index(transfromTo(JobExecutorEvent.class, event));
                 break;
             case "TaskInstanceEvent":
-                userTaskHistoryService.index(transfromTo(TaskInstanceEvent.class, event.getPayload()));
+                userTaskHistoryService.index(transfromTo(TaskInstanceEvent.class, event));
                 break;
             case "TaskInstanceVariableEvent":
-                userTaskHistoryService.index(transfromTo(TaskInstanceVariableEvent.class, event.getPayload()));
                 break;
         }
     }
+
     private <T> T transfromTo(Class<T> clazz, JsonNode node) {
         return mapper.convertValue(node, clazz);
     }

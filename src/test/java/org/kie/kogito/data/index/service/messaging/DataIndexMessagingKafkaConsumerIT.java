@@ -20,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kie.kogito.audit.event.engine.ProcessInstanceEvent;
+import org.kie.kogito.audit.event.ProcessInstanceEvent;
 import org.kie.kogito.audit.transport.streams.Transport;
 import org.kie.kogito.test.quarkus.kafka.KafkaTestClient;
 import org.kie.kogito.testcontainers.quarkus.KafkaQuarkusTestResource;
@@ -33,7 +33,8 @@ import com.fasterxml.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
-
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 @TestProfile(DataIndexKafkaTestProfile.class)
 public class DataIndexMessagingKafkaConsumerIT  {
@@ -57,9 +58,20 @@ public class DataIndexMessagingKafkaConsumerIT  {
 
     @Test
     void testProcessInstanceEvent() throws Exception {
-        ProcessInstanceEvent event = new ProcessInstanceEvent();
-        event.setEventType(2);
-        kafkaClient.produce(toJson(event), Transport.KOGITO_PROCESS_INSTANCES_EVENTS);
+        ProcessInstanceEvent event1 = new ProcessInstanceEvent();
+        event1.setEventType(2);
+        ProcessInstanceEvent event2 = new ProcessInstanceEvent();
+        event2.setEventType(3);
+        
+        ProcessInstanceEvent[] events = new ProcessInstanceEvent[] {event1, event2};
+        
+        kafkaClient.produce(toJson(event1), Transport.KOGITO_PROCESS_INSTANCES_EVENTS);
+        
+        given()
+        .when().get("/")
+        .then()
+           .statusCode(200)
+           .body(is("Hello, World!"));
     }
     
     
