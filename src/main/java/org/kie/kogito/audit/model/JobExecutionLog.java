@@ -30,11 +30,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 
 @Entity
 @Table(name = "JobExecutionHistory")
 @SequenceGenerator(name = "jobExecutionHistoryIdSeq", sequenceName = "JOB_EXECUTION_HISTORY_ID_SEQ")
-public class JobExecutionLog {
+public class JobExecutionLog extends AbstractEntityLog {
 
     public enum LogType {
         QUEUED,
@@ -80,10 +82,12 @@ public class JobExecutionLog {
     @Column(name="retry")
     private Integer numberOfRetry = 0;
 
-    @Column(name = "request_data")
+    @Type(type = "json")
+    @Column(name = "request_data", columnDefinition = "json")
     private String requestData;
 
-    @Column(name = "response_data")
+    @Type(type = "json")
+    @Column(name = "response_data", columnDefinition = "json")
     private String responseData;
 
     public Long getId() {

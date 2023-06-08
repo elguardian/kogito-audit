@@ -8,6 +8,8 @@ import org.kie.kogito.audit.filter.BinaryExpression;
 import org.kie.kogito.audit.filter.Filter;
 import org.kie.kogito.audit.filter.GroupExpression;
 import org.kie.kogito.audit.filter.IdentifierExpression;
+import org.kie.kogito.audit.filter.LiteralExpression;
+import org.kie.kogito.audit.filter.MemberExpression;
 import org.kie.kogito.audit.filter.UnaryExpression;
 import org.kie.kogito.audit.filter.ValueExpression;
 import org.kie.kogito.audit.filter.VoidExpression;
@@ -15,21 +17,27 @@ import org.kie.kogito.audit.filter.interpreter.ExpressionInterpreter;
 
 public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
 
-    private static final int IDENTIFIER = 1;
-    private static final int VALUE = 2;
-    private static final int EXPR = 3;
-
     private int idx;
     
-    private class Node {
+    private class Node {       
         private String computed;
-        private int type;
+        
+        private Object value;
 
-        public Node(String computed) {
-            this(computed, EXPR);
+        private Class<?> type;
+
+        private String parameterName;
+        
+        public Node() {
+            this("", null, Object.class);
         }
 
-        public Node(String computed, int type) {
+        public Node(String computed, Class<?> type) {
+            this(computed, computed, type);
+        }
+        
+        public Node(String computed, Object value, Class<?> type) {
+            this.value = value;
             this.computed = computed;
             this.type = type;
         }
@@ -38,7 +46,11 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
             return computed;
         }
 
-        public int getType() {
+        public Object getValue() {
+            return value;
+        }
+
+        public Class<?> getType() {
             return type;
         }
     }
@@ -77,20 +89,50 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
 
     @Override
     public void visit(VoidExpression voidExpression) {
-        stack.push(new Node("", EXPR));
+        stack.push(new Node());
     }
 
     @Override
     public void visit(Filter filter) {
-        String where = stack.pop().getComputed();
+        Node node = stack.pop();
+        String where = node.getComputed();
         where = where.isEmpty() ? "" : "WHERE " + where;
-        stack.push(new Node("SELECT " + entity + " FROM " + clazz.getSimpleName() + " " + entity + " " + where, EXPR));
-
+        stack.push(new Node("SELECT " + entity + " FROM " + clazz.getSimpleName() + " " + entity + " " + where, node.getType()));
     }
 
     @Override
+    public void visit(LiteralExpression literalExpression) {        
+        stack.push(createParameterNode(literalExpression.getLiteral(), String.class));
+    }
+    
+    @Override
+    public void visit(MemberExpression memberExpression) {
+        stack.push(new Node("'" + memberExpression.getMember() + "'", String.class));
+        
+    }
+
+    @Override
+    public void visit(ValueExpression valueExpression) {
+        stack.push(createParameterNode(valueExpression.getValue(), valueExpression.getValue().getClass()));
+    }
+           
+    private Node createParameterNode(Object value, Class<?> type) {
+        String paramName = "param_" + idx++;
+        parameters.put(paramName, value);
+        Node node = new Node(":" + paramName, value, type);
+        node.parameterName = paramName;
+        return node;
+    }
+    
+    @Override
     public void visit(IdentifierExpression identifierExpression) {
-        stack.push(new Node(toEntity(identifierExpression.getName()), IDENTIFIER));
+        Class<?> type;
+        try {
+            type = clazz.getDeclaredField(identifierExpression.getName()).getType();
+        } catch (NoSuchFieldException | SecurityException e) {
+            type = Object.class;
+        }
+        stack.push(new Node(toEntity(identifierExpression.getName()), type));
     }
 
     private String toEntity(String name) {
@@ -100,7 +142,8 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
     @Override
     public void visit(GroupExpression groupExpression) {
         Node expression = stack.pop();
-        stack.push(new Node("(" + expression.getComputed() + ")", expression.getType()));
+        expression.computed = "(" + expression.getComputed() + ")"; // derive the node just changing this
+        stack.push(expression);
     }
 
     @Override
@@ -108,32 +151,60 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
         Node right = stack.pop();
         Node left = stack.pop();
 
+        coarce(right, left);
         switch (binaryExpression.getBinaryOperand()) {
             case AND:
-                stack.push(new Node(left.getComputed() + " AND " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " AND " + right.getComputed(), Boolean.class));
                 break;
             case OR:
-                stack.push(new Node(left.getComputed() + " OR " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " OR " + right.getComputed(), Boolean.class));
                 break;
             case GE:
-                stack.push(new Node(left.getComputed() + " >= " + right.getComputed()));
+
+                stack.push(new Node(left.getComputed() + " >= " + right.getComputed(), Boolean.class));
                 break;
             case GT:
-                stack.push(new Node(left.getComputed() + " > " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " > " + right.getComputed(), Boolean.class));
                 break;
             case LE:
-                stack.push(new Node(left.getComputed() + " < " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " < " + right.getComputed(), Boolean.class));
                 break;
             case LT:
-                stack.push(new Node(left.getComputed() + " <= " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " <= " + right.getComputed(), Boolean.class));
                 break;
             case EQUAL:
-                stack.push(new Node(left.getComputed() + " = " + right.getComputed()));
+                stack.push(new Node(left.getComputed() + " = " + right.getComputed(), Boolean.class));
+                break;
+            case EXTRACT:
+                stack.push(new Node("JSON_EXTRACT(" +left.getComputed() + ", " + right.getComputed() + ", '" + left.type.getSimpleName().toUpperCase() + "')", left.type));
                 break;
             default:
-                System.out.println("FAIL!");
+                System.out.println("FAIL! " + binaryExpression.getBinaryOperand());
                 break;
         }
+    }
+
+    private void coarce(Node right, Node left) {
+        if(Enum.class.isAssignableFrom(right.getType()) && left.type.equals(String.class)) {
+            cast(left,right.getType());
+        } else if (Enum.class.isAssignableFrom(left.getType()) && right.type.equals(String.class)) {
+            cast(right, left.getType());
+        }
+    }
+
+    private void cast(Node left, Class<?> type) {
+        Object [] items = type.getEnumConstants();
+        for (Object item : items) {
+            if( ((Enum) item).name().equalsIgnoreCase((String) left.getValue())) {
+                if(parameters.containsKey(left.parameterName)) {
+                    parameters.put(left.parameterName, item);
+                }
+                left.value = item;
+                left.type = type;
+                return;
+            }
+        }
+        
     }
 
     @Override
@@ -141,13 +212,13 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
         Node expression = stack.pop();
         switch (unaryExpression.getOperand()) {
             case NOT:
-                stack.push(new Node("NOT " + expression.getComputed()));
+                stack.push(new Node("NOT " + expression.getComputed(), Boolean.class));
                 break;
             case EMPTY:
-                stack.push(new Node("EMTPY " + expression.getComputed()));
+                stack.push(new Node("EMTPY " + expression.getComputed(), Boolean.class));
                 break;
             case IS_NULL:
-                stack.push(new Node(expression.getComputed() + " IS NULL"));
+                stack.push(new Node(expression.getComputed() + " IS NULL", Boolean.class));
                 break;
             default:
                 System.out.println("FAIL!");
@@ -155,15 +226,8 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
         }
     }
 
-    @Override
-    public void visit(ValueExpression valueExpression) {
-        String paramName = "param_" + idx++;
-        parameters.put(paramName, valueExpression.getValue());
 
-        stack.push(new Node(":" + paramName, VALUE));
-
-    }
-           
+    
     static public class QueryInterpreterBuilder<B> {
         private Class<B> clazz;
         private String entity;
@@ -195,4 +259,5 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
     static public <C> QueryInterpreterBuilder<C> newBuilder(Class<C> clazz) {
         return new QueryInterpreterBuilder<C>(clazz);
     }
+
 }

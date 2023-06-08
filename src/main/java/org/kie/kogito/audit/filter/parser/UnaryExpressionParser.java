@@ -1,6 +1,7 @@
 package org.kie.kogito.audit.filter.parser;
 
 import org.kie.kogito.audit.filter.Expression;
+import org.kie.kogito.audit.filter.ExpressionOperand;
 import org.kie.kogito.audit.filter.UnaryExpression;
 
 public class UnaryExpressionParser implements Parser<Expression> {

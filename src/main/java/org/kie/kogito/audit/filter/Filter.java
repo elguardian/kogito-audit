@@ -1,5 +1,7 @@
 package org.kie.kogito.audit.filter;
 
+import static org.kie.kogito.audit.filter.BinaryExpression.opAnd;
+
 import org.kie.kogito.audit.filter.interpreter.ExpressionInterpreter;
 
 public class Filter implements Expression {
@@ -25,6 +27,10 @@ public class Filter implements Expression {
         return "Filter {" + expression + "}";
     }
 
+    public Filter compose(Filter filter) {
+        return new Filter(opAnd(this, filter.getExpression()));
+    }
+    
     public static Filter filterWithExpression(Expression expression) {
         return new Filter(expression);
     }

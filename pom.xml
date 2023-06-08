@@ -15,42 +15,24 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-web-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.smallrye.reactive</groupId>
 			<artifactId>smallrye-reactive-messaging-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-jackson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>connect-json</artifactId>
-			<version>3.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-rest-client-reactive-jackson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-rest-client-reactive</artifactId>
+			<artifactId>quarkus-resteasy-reactive-jackson</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.quarkiverse.reactivemessaging.http</groupId>
 			<artifactId>quarkus-reactive-messaging-http</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy-reactive</artifactId>
@@ -66,16 +48,11 @@
 			<artifactId>quarkus-hibernate-orm</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.vladmihalcea</groupId>
-			<artifactId>hibernate-types-52</artifactId>
-			<version>2.15.1</version>
+		    <groupId>io.hypersistence</groupId>
+		    <artifactId>hypersistence-utils-hibernate-55</artifactId>
+		    <version>3.4.1</version>
 		</dependency>
-		<!-- JDBC driver dependencies -->
-		<dependency>
-			<groupId>io.quarkus</groupId>
-			<artifactId>quarkus-jdbc-h2</artifactId>
-			<scope>test</scope>
-		</dependency>
+
 		<!-- Metrics -->
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -86,6 +63,21 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-smallrye-health</artifactId>
 		</dependency>
+		
+		
+		<!-- kafka stuff -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>connect-json</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+		
+		<!--test dependencies -->
+		
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-junit5</artifactId>
@@ -119,6 +111,12 @@
 		<dependency>
 			<groupId>io.smallrye.reactive</groupId>
 			<artifactId>smallrye-reactive-messaging-kafka</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JDBC driver dependencies -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-jdbc-postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

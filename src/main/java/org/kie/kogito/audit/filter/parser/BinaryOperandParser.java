@@ -1,5 +1,7 @@
 package org.kie.kogito.audit.filter.parser;
 
+import org.kie.kogito.audit.filter.ExpressionOperand;
+
 public class BinaryOperandParser implements Parser<ExpressionOperand> {
 
     @Override

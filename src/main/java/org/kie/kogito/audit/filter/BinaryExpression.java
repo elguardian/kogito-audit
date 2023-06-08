@@ -1,7 +1,6 @@
 package org.kie.kogito.audit.filter;
 
 import org.kie.kogito.audit.filter.interpreter.ExpressionInterpreter;
-import org.kie.kogito.audit.filter.parser.ExpressionOperand;
 
 public class BinaryExpression implements Expression {
 
@@ -31,6 +30,14 @@ public class BinaryExpression implements Expression {
         return leftMember + " " + binaryOperand + " " + rightMember;
     }
 
+    public static Expression opEquals(Expression left, Expression right) {
+        return new BinaryExpression(left, ExpressionOperand.EQUAL, right);
+    }
+    
+    public static Expression opExtract(String identifier, String member) {
+        return new BinaryExpression(new IdentifierExpression(identifier), ExpressionOperand.EXTRACT, new MemberExpression(member));
+    }
+    
     public static Expression opEquals(String identifier, Object value) {
         return new BinaryExpression(new IdentifierExpression(identifier), ExpressionOperand.EQUAL, new ValueExpression(value));
     }

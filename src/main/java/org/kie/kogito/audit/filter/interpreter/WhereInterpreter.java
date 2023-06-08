@@ -6,8 +6,11 @@ import org.kie.kogito.audit.filter.BinaryExpression;
 import org.kie.kogito.audit.filter.Filter;
 import org.kie.kogito.audit.filter.GroupExpression;
 import org.kie.kogito.audit.filter.IdentifierExpression;
+import org.kie.kogito.audit.filter.LiteralExpression;
+import org.kie.kogito.audit.filter.MemberExpression;
 import org.kie.kogito.audit.filter.UnaryExpression;
 import org.kie.kogito.audit.filter.ValueExpression;
+import org.kie.kogito.audit.filter.VoidExpression;
 
 public class WhereInterpreter implements ExpressionInterpreter<String> {
 
@@ -23,8 +26,23 @@ public class WhereInterpreter implements ExpressionInterpreter<String> {
     }
 
     @Override
+    public void visit(VoidExpression voidExpression) {
+        stack.push("");
+    }
+
+    @Override
     public void visit(IdentifierExpression identifierExpression) {
         stack.push(identifierExpression.getName());
+    }
+    
+    @Override
+    public void visit(MemberExpression memberExpression) {
+        stack.push("\'" + memberExpression.getMember() + "\'");
+    }
+
+    @Override
+    public void visit(LiteralExpression literalExpression) {
+        stack.push("\'" + literalExpression.getLiteral() + "\'");
     }
 
     @Override
@@ -60,6 +78,8 @@ public class WhereInterpreter implements ExpressionInterpreter<String> {
             case EQUAL:
                 stack.push(left + " = " + right);
                 break;
+            case EXTRACT:
+                stack.push(left + " -> " + right);
             default:
                 break;
         }
@@ -91,5 +111,9 @@ public class WhereInterpreter implements ExpressionInterpreter<String> {
     public String consume() {
         return stack.pop();
     }
+
+ 
+
+
 
 }

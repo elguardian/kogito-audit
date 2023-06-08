@@ -13,8 +13,8 @@ public enum TokenType {
     GT_OPERAND,
     EQUAL_OPERAND,
     NUMBER,
-    CONSTANT,
-    DATE,
     OPEN_PARENTHESIS,
-    CLOSE_PARENTHESIS;
+    CLOSE_PARENTHESIS,
+    LITERAL,
+    EXTRACT;
 };

@@ -16,6 +16,9 @@
 
 package org.kie.kogito.data.index.service.messaging;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,16 +31,13 @@ import org.testcontainers.shaded.org.apache.commons.io.output.ByteArrayOutputStr
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+
 @QuarkusTest
 @TestProfile(DataIndexKafkaTestProfile.class)
-public class DataIndexMessagingKafkaConsumerIT  {
+public class DataIndexMessagingKafkaConsumerIT {
 
     @ConfigProperty(name = KafkaQuarkusTestResource.KOGITO_KAFKA_PROPERTY, defaultValue = "localhost:9092")
     public String kafkaBootstrapServers;
@@ -62,26 +62,25 @@ public class DataIndexMessagingKafkaConsumerIT  {
         event1.setEventType(2);
         ProcessInstanceEvent event2 = new ProcessInstanceEvent();
         event2.setEventType(3);
-        
-        ProcessInstanceEvent[] events = new ProcessInstanceEvent[] {event1, event2};
-        
+
+        ProcessInstanceEvent[] events = new ProcessInstanceEvent[] { event1, event2 };
+
         kafkaClient.produce(toJson(event1), Transport.KOGITO_PROCESS_INSTANCES_EVENTS);
-        
+
         given()
-        .when().get("/")
-        .then()
-           .statusCode(200)
-           .body(is("Hello, World!"));
+                .when().get("/")
+                .then()
+                .statusCode(200)
+                .body(is("Hello, World!"));
     }
-    
-    
+
     private String toJson(Object pojo) throws Exception {
         ObjectMapper mapper = new ObjectMapper()
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         String json = "";
         //Object to JSON in file
-        try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             mapper.writeValue(out, pojo);
             json = new String(out.toByteArray());
         }

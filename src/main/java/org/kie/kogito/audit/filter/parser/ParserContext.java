@@ -68,6 +68,13 @@ public class ParserContext {
                                 tokens.add(new Token(TokenType.IDENTIFIER, tokenizer.sval));
                         }
                         break;
+                    case '-':
+                        if(tokenizer.nextToken() == '>') {
+                            tokens.add(new Token(TokenType.EXTRACT));
+                            break;
+                        } else {
+                            continue;                            
+                        }
                     case '=':
                         tokens.add(new Token(TokenType.EQUAL_OPERAND));
                         break;
@@ -92,6 +99,9 @@ public class ParserContext {
                         break;
                     case ')':
                         tokens.add(new Token(TokenType.CLOSE_PARENTHESIS));
+                        break;
+                    case '\'':
+                        tokens.add(new Token(TokenType.LITERAL, tokenizer.sval));
                         break;
                 }
                 tokenizer.nextToken();

@@ -2,12 +2,15 @@ package org.kie.kogito.audit.filter.parser;
 
 import org.kie.kogito.audit.filter.BinaryExpression;
 import org.kie.kogito.audit.filter.Expression;
+import org.kie.kogito.audit.filter.ExpressionOperand;
+import org.kie.kogito.audit.filter.MemberExpression;
 
 public class ExpressionParser implements Parser<Expression> {
 
     @Override
     public Expression parse(ParserContext context) {
         Token token = context.currentToken();
+
         Expression leafExpression = null;
         boolean shouldReduce = false;
         switch (token.getType()) {
@@ -22,6 +25,15 @@ public class ExpressionParser implements Parser<Expression> {
                 break;
             case IDENTIFIER:
                 leafExpression = new IdentifierParser().parse(context);
+                if(TokenType.EXTRACT.equals(context.currentToken().getType())) {
+                    context.consume();
+                    MemberExpression extract = new MemberExpressionParser().parse(context);
+                    leafExpression = new BinaryExpression(leafExpression, ExpressionOperand.EXTRACT, extract);
+                }
+                shouldReduce = expect(context, TokenType.AND, TokenType.OR, TokenType.CLOSE_PARENTHESIS);
+                break;
+            case LITERAL:
+                leafExpression = new LiteralParser().parse(context);
                 shouldReduce = expect(context, TokenType.AND, TokenType.OR, TokenType.CLOSE_PARENTHESIS);
                 break;
             case OPEN_PARENTHESIS:

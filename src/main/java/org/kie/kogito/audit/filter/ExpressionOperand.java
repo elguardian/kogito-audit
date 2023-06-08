@@ -1,4 +1,4 @@
-package org.kie.kogito.audit.filter.parser;
+package org.kie.kogito.audit.filter;
 
 public enum ExpressionOperand {
     EQUAL,
@@ -6,10 +6,10 @@ public enum ExpressionOperand {
     GT,
     LE,
     GE,
-    CONTAINS,
     NOT,
     EMPTY,
     AND, 
     OR, 
-    IS_NULL
+    IS_NULL,
+    EXTRACT
 }

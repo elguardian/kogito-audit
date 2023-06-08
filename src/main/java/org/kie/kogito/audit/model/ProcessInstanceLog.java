@@ -57,6 +57,9 @@ public class ProcessInstanceLog {
     @Column(name = "deployment_id")
     private String deploymentId;
 
+    @Column(name = "process_type")
+    private Integer processType;
+
     @Column(name = "process_id")
     private String processId;
 
@@ -66,33 +69,31 @@ public class ProcessInstanceLog {
     @Column(name = "process_name")
     private String processName;
 
+    @Column(name = "parent_process_instance_id")
+    private String parentProcessInstanceId;
+
     @Column(name = "process_instance_id")
     private String processInstanceId;
 
     @Column(name = "process_instance_description")
     private String processInstanceDescription;
 
+    @Column(name = "business_key")
+    private String businessKey;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "event_date")
     private Date eventDate;
 
+    @Column(name = "event_user")
+    private String eventUser;
+    
+
     @Column(name = "event_type", nullable = false)
     private LogType eventType;
 
-    @Column(name = "event_user")
-    private String eventUser;
-
-    @Column(name = "parent_process_instance_id", nullable = true)
-    private String parentProcessInstanceId;
-
     @Column(nullable = true)
     private String outcome;
-
-    @Column(name = "business_key")
-    private String businessKey;
-
-    @Column(name = "process_type", nullable = true)
-    private Integer processType;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "sla_due_date")
