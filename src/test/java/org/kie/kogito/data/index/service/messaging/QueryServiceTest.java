@@ -117,7 +117,7 @@ public class QueryServiceTest {
     @Test
     @Transactional
     public void testJsonColumnSearch() {
-       Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "key"), new ValueExpression(1)));
+       Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "key"), new ValueExpression(1)));
        Assertions.assertEquals(1, queryService.execute(JobExecutionLog.class, filter).size());
     }
 }
