@@ -18,12 +18,11 @@ public class Snippet {
     
     public static void main(String[] args) throws Exception {        
         WhereInterpreter whereInterpreter = new WhereInterpreter();
-        Filter filter4 = new FilterParser().parse(new ParserContext("requestData -> key = 1"));
-        filter4.accept(whereInterpreter);
+        Filter filter4 = new FilterParser().parse(new ParserContext("requestData -> INTEGER key = 1"));
         filter4.accept(whereInterpreter);
         System.out.println(whereInterpreter.consume());
         
-        Filter filter3 = Filter.filterWithExpression(opEquals(opExtract("requestData", "key"), new ValueExpression(1)));
+        Filter filter3 = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "key"), new ValueExpression(1)));
         filter3.accept(whereInterpreter);
         System.out.println(whereInterpreter.consume());
         

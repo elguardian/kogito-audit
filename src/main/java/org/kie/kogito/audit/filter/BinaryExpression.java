@@ -34,8 +34,8 @@ public class BinaryExpression implements Expression {
         return new BinaryExpression(left, ExpressionOperand.EQUAL, right);
     }
     
-    public static Expression opExtract(String identifier, String member) {
-        return new BinaryExpression(new IdentifierExpression(identifier), ExpressionOperand.EXTRACT, new MemberExpression(member));
+    public static Expression opExtract(String identifier, String type, String member) {
+        return new BinaryExpression(new IdentifierExpression(identifier), ExpressionOperand.EXTRACT, new MemberExpression(type, member));
     }
     
     public static Expression opEquals(String identifier, Object value) {

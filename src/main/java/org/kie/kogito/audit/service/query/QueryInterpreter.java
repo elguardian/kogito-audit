@@ -107,7 +107,7 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
     
     @Override
     public void visit(MemberExpression memberExpression) {
-        stack.push(new Node("'" + memberExpression.getMember() + "'", String.class));
+        stack.push(new Node("'" + memberExpression.getMember() + "', '" + memberExpression.getType() +"'", String.class));
         
     }
 
@@ -176,7 +176,7 @@ public class QueryInterpreter<T> implements ExpressionInterpreter<Query<T>> {
                 stack.push(new Node(left.getComputed() + " = " + right.getComputed(), Boolean.class));
                 break;
             case EXTRACT:
-                stack.push(new Node("JSON_EXTRACT(" +left.getComputed() + ", " + right.getComputed() + ", '" + left.type.getSimpleName().toUpperCase() + "')", left.type));
+                stack.push(new Node("JSON_EXTRACT(" +left.getComputed() + ", " + right.getComputed() + ")", left.type));
                 break;
             default:
                 System.out.println("FAIL! " + binaryExpression.getBinaryOperand());

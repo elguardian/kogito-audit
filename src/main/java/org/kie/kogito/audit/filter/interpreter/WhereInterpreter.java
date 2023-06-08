@@ -37,7 +37,7 @@ public class WhereInterpreter implements ExpressionInterpreter<String> {
     
     @Override
     public void visit(MemberExpression memberExpression) {
-        stack.push("\'" + memberExpression.getMember() + "\'");
+        stack.push(memberExpression.getType() + " \'" + memberExpression.getMember() + "\'");
     }
 
     @Override
