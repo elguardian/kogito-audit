@@ -19,6 +19,7 @@ public class QueryService {
     
     public <T> List<T> execute(Class<T> clazz, Filter filter) {
         Query<T> query = QueryInterpreter.newBuilder(clazz).filter(filter).build();
+        System.out.println("About to query " + query.getSQL() + " | " + query.getParameters());
         TypedQuery<T> jpaQuery = em.createQuery(query.getSQL(), query.getType());
         query.getParameters().forEach(jpaQuery::setParameter);
         return jpaQuery.getResultList();

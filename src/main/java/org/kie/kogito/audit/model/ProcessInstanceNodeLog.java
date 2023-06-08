@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "ProcessInstanceNodeHistory")
 @SequenceGenerator(name="processInstanceNodeHistoryIdSeq", sequenceName="PROCESS_INSTANCE_NODE_HISTORY_ID_SEQ", allocationSize=1)
-public class ProcessInstanceNodeLog {
+public class ProcessInstanceNodeLog extends AbstractEntityLog {
 
     public enum LogType {
         ENTER,
@@ -45,19 +45,6 @@ public class ProcessInstanceNodeLog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator="processInstanceNodeHistoryIdSeq")
 	private long id;
-
-    @Column(name="deployment_id")
-    private String deploymentId;
-
-    @Column(name="process_id")
-    private String processId;
-
-    @Column(name="process_instance_id")
-    private String processInstanceId;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "event_date")
-    private Date eventDate;
     
     @Column(name = "event_type")
     private LogType eventType;
@@ -96,38 +83,6 @@ public class ProcessInstanceNodeLog {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
     }
 
     public LogType getEventType() {

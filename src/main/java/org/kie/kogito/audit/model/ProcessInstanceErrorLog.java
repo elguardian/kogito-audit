@@ -16,8 +16,6 @@
 
 package org.kie.kogito.audit.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "ProcessInstanceErrorHistory")
 @SequenceGenerator(name = "processInstanceErrorHistorySeq", sequenceName = "PROCESS_INSTANCE_ERROR_HISTORY_SEQ_ID", allocationSize = 1)
-public class ProcessInstanceErrorLog {
+public class ProcessInstanceErrorLog extends AbstractEntityLog {
 
     @Transient
     private static final Logger logger = LoggerFactory.getLogger(ProcessInstanceErrorLog.class);
@@ -45,15 +43,6 @@ public class ProcessInstanceErrorLog {
     @GeneratedValue(strategy = GenerationType.AUTO, generator="processInstanceErrorHistorySeq")
     private Long id;
     
-    @Column(name = "deployment_id")
-    private String deploymentId;
-
-    @Column(name = "process_id")
-    private String processId;
-
-    @Column(name = "process_instance_id")
-    private String processInstanceId;
-
     @Column(name = "job_id")
     private String jobId;
 
@@ -64,15 +53,12 @@ public class ProcessInstanceErrorLog {
     
     @Column(name = "activity_name")
     private String activityName;
-
     
     private String error;
     
     @Column(name ="error_message")
     private String errorMessage;
     
-    @Column(name = "error_date")
-    private Date errorDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "processInstanceErrorHistorySeq")
@@ -85,13 +71,6 @@ public class ProcessInstanceErrorLog {
         this.id = id;
     }
 
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
 
     public String getJobId() {
         return jobId;
@@ -99,22 +78,6 @@ public class ProcessInstanceErrorLog {
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
     }
 
     public String getType() {
@@ -161,13 +124,5 @@ public class ProcessInstanceErrorLog {
     public void setError(String error) {
         this.error = error;
     }
-
-    public Date getErrorDate() {
-        return errorDate;
-    }
-
-    public void setErrorDate(Date errorDate) {
-        this.errorDate = errorDate;
-    }    
     
 }

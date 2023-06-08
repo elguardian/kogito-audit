@@ -16,8 +16,6 @@
 
 package org.kie.kogito.audit.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,8 +23,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.slf4j.Logger;
@@ -35,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "ProcessInstanceVariableHistory")
 @SequenceGenerator(name="processInstanceVariableHistoryIdSeq", sequenceName="PROCESS_INSTANCE_VARIABLE_HISTORY_ID_SEQ", allocationSize=1)
-public class ProcessInstanceVariableLog {
+public class ProcessInstanceVariableLog extends AbstractEntityLog {
     
     @Transient
 	private static final Logger logger = LoggerFactory.getLogger(ProcessInstanceVariableLog.class);
@@ -52,24 +48,9 @@ public class ProcessInstanceVariableLog {
     @GeneratedValue(strategy = GenerationType.AUTO, generator="processInstanceVariableHistoryIdSeq")
 	private long id;
 
-    @Column(name="deployment_id")
-    private String deploymentId;
-
-    @Column(name="process_id")
-    private String processId;
-    
-    @Column(name="process_instance_id")
-    private String processInstanceId;
-   
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "event_date")
-    private Date eventDate;
     
     @Column(name = "event_type")
     private LogType eventType;
-
-    @Column(name = "event_user")
-    private String eventUser;
     
     @Column(name="variable_id")
     private String variableId;
@@ -91,38 +72,6 @@ public class ProcessInstanceVariableLog {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
     }
 
     public LogType getEventType() {
@@ -163,14 +112,6 @@ public class ProcessInstanceVariableLog {
 
     public void setOldValue(String oldValue) {
         this.oldValue = oldValue;
-    }
-
-    public String getEventUser() {
-        return eventUser;
-    }
-    
-    public void setEventUser(String eventUser) {
-        this.eventUser = eventUser;
     }
     
 }

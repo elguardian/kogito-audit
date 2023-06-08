@@ -16,8 +16,6 @@
 
 package org.kie.kogito.audit.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,8 +25,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -37,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 @Entity
 @Table(name = "TaskInstanceVariableHistory")
 @SequenceGenerator(name = "taskInstanceVariableHistoryIdSeq", sequenceName = "TASK_INSTANCE_VARIABLE_HISTORY_ID_SEQ")
-public class TaskInstanceVariableLog {
+public class TaskInstanceVariableLog extends AbstractEntityLog {
 
     public enum VariableType {
         INPUT,
@@ -56,12 +52,6 @@ public class TaskInstanceVariableLog {
     @Column(name = "task_id")
     private String taskId;
 
-    @Column(name = "process_instance_id")
-    private String processInstanceId;
-
-    @Column(name = "process_id")
-    private String processId;
-
     private String name;
 
     @Type(type = "json")
@@ -74,30 +64,16 @@ public class TaskInstanceVariableLog {
     
     @Enumerated(EnumType.ORDINAL)
     private VariableType type;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date eventDate;
     
     @Column(name="event_type")
     private LogType eventType;
     
-    @Column(name="event_user")
-    private String eventUser;
-
     public Long getId() {
         return id;
     }
 
     public String getTaskId() {
         return taskId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public String getProcessId() {
-        return processId;
     }
 
     public String getName() {
@@ -112,24 +88,8 @@ public class TaskInstanceVariableLog {
         this.taskId = taskId;
     }
 
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
     }
 
     public VariableType getType() {
@@ -162,14 +122,6 @@ public class TaskInstanceVariableLog {
 
     public void setEventType(LogType eventType) {
         this.eventType = eventType;
-    }
-
-    public String getEventUser() {
-        return eventUser;
-    }
-
-    public void setEventUser(String eventUser) {
-        this.eventUser = eventUser;
     }
 
 }

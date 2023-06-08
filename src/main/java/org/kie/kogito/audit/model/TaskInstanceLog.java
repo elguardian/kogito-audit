@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 @Table(name = "TaskInstanceHistory")
 @SequenceGenerator(name = "taskInstanceHistoryIdSeq", sequenceName = "TASK_INSTANCE_HISTORY_ID_SEQ")
-public class TaskInstanceLog  {
+public class TaskInstanceLog extends AbstractEntityLog {
 
     public enum LogType {
         CREATED,
@@ -56,31 +56,16 @@ public class TaskInstanceLog  {
     
     private String actualUser;
     
-    @Column(name="deployment_id")
-    private String deploymentId;
-    
-    @Column(name="process_id")
-    private String processId;
-
     @Column(name="node_id")
     private String nodeId;
 
-    @Column(name="process_instance_id")
-    private String processInstanceId;
-
     @Column(name="node_instance_id")
     private String nodeInstanceId;
-    
-    @Column(name = "event_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date eventDate;
     
     @Column(name="event_type")
     @Enumerated(EnumType.STRING)
     private LogType eventType;
    
-    @Column(name="event_user")
-    private String eventUser;
 
     public Long getId() {
         return id;
@@ -122,21 +107,6 @@ public class TaskInstanceLog  {
         this.actualUser = actualUser;
     }
 
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
 
     public String getNodeId() {
         return nodeId;
@@ -146,13 +116,6 @@ public class TaskInstanceLog  {
         this.nodeId = nodeId;
     }
 
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
 
     public String getNodeInstanceId() {
         return nodeInstanceId;
@@ -162,28 +125,12 @@ public class TaskInstanceLog  {
         this.nodeInstanceId = nodeInstanceId;
     }
 
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
-    }
-
     public LogType getEventType() {
         return eventType;
     }
 
     public void setEventType(LogType eventType) {
         this.eventType = eventType;
-    }
-
-    public String getEventUser() {
-        return eventUser;
-    }
-
-    public void setEventUser(String eventUser) {
-        this.eventUser = eventUser;
     }
    
 }

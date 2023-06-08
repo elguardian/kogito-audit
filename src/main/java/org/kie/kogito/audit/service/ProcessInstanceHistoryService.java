@@ -67,7 +67,7 @@ public class ProcessInstanceHistoryService {
         log.setActivityName(event.getActivityName());
         log.setError(event.getError());
         log.setErrorMessage(event.getErrorMessage());
-        log.setErrorDate(event.getErrorDate());
+        log.setEventDate(event.getErrorDate());
         em.persist(log);
     }
 

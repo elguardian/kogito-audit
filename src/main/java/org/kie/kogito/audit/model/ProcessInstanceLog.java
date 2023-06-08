@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "ProcessInstanceHistory")
 @SequenceGenerator(name = "processInstanceHistoryIdSeq", sequenceName = "PROCESS_INSTANCE_HISTORY_ID_SEQ", allocationSize = 1)
-public class ProcessInstanceLog {
+public class ProcessInstanceLog extends AbstractEntityLog {
 
     public enum LogType {
         STARTED,
@@ -44,49 +44,13 @@ public class ProcessInstanceLog {
         SLA_VIOLATION
     }
 
-    @Transient
-    private static final Logger logger = LoggerFactory.getLogger(ProcessInstanceLog.class);
 
-    @Transient
-    private final int CORRELATION_KEY_LOG_LENGTH = Integer.parseInt(System.getProperty("org.jbpm.correlationkey.length", "255"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "processInstanceHistoryIdSeq")
     private long id;
 
-    @Column(name = "deployment_id")
-    private String deploymentId;
 
-    @Column(name = "process_type")
-    private Integer processType;
-
-    @Column(name = "process_id")
-    private String processId;
-
-    @Column(name = "process_version")
-    private String processVersion;
-
-    @Column(name = "process_name")
-    private String processName;
-
-    @Column(name = "parent_process_instance_id")
-    private String parentProcessInstanceId;
-
-    @Column(name = "process_instance_id")
-    private String processInstanceId;
-
-    @Column(name = "process_instance_description")
-    private String processInstanceDescription;
-
-    @Column(name = "business_key")
-    private String businessKey;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "event_date")
-    private Date eventDate;
-
-    @Column(name = "event_user")
-    private String eventUser;
     
 
     @Column(name = "event_type", nullable = false)
@@ -107,61 +71,6 @@ public class ProcessInstanceLog {
         this.id = id;
     }
 
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    public String getProcessVersion() {
-        return processVersion;
-    }
-
-    public void setProcessVersion(String processVersion) {
-        this.processVersion = processVersion;
-    }
-
-    public String getProcessName() {
-        return processName;
-    }
-
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public String getProcessInstanceDescription() {
-        return processInstanceDescription;
-    }
-
-    public void setProcessInstanceDescription(String processInstanceDescription) {
-        this.processInstanceDescription = processInstanceDescription;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
-    }
 
     public LogType getEventType() {
         return eventType;
@@ -171,13 +80,7 @@ public class ProcessInstanceLog {
         this.eventType = eventType;
     }
 
-    public String getParentProcessInstanceId() {
-        return parentProcessInstanceId;
-    }
 
-    public void setParentProcessInstanceId(String parentProcessInstanceId) {
-        this.parentProcessInstanceId = parentProcessInstanceId;
-    }
 
     public String getOutcome() {
         return outcome;
@@ -187,21 +90,6 @@ public class ProcessInstanceLog {
         this.outcome = outcome;
     }
 
-    public String getEventUser() {
-        return eventUser;
-    }
-
-    public void setEventUser(String eventUser) {
-        this.eventUser = eventUser;
-    }
-
-    public Integer getProcessType() {
-        return processType;
-    }
-
-    public void setProcessType(Integer processType) {
-        this.processType = processType;
-    }
 
     public Date getSlaDueDate() {
         return slaDueDate;
@@ -209,21 +97,6 @@ public class ProcessInstanceLog {
 
     public void setSlaDueDate(Date slaDueDate) {
         this.slaDueDate = slaDueDate;
-    }
-
-    public String getBusinessKey() {
-        return businessKey;
-    }
-
-    public void setBusinessKey(String businessKey) {
-        String trimmedBusinesskey = null;
-        if (businessKey != null && businessKey.length() > CORRELATION_KEY_LOG_LENGTH) {
-            trimmedBusinesskey = businessKey.substring(0, CORRELATION_KEY_LOG_LENGTH);
-            logger.warn("CorrelationKey content was trimmed as it was too long (more than {} characters)", CORRELATION_KEY_LOG_LENGTH);
-        } else {
-            trimmedBusinesskey = businessKey;
-        }
-        this.businessKey = trimmedBusinesskey;
     }
 
 }

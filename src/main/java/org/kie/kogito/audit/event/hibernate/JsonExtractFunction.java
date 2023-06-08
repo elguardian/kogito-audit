@@ -6,7 +6,6 @@ import org.hibernate.QueryException;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 
 public final class JsonExtractFunction implements SQLFunction {
@@ -23,7 +22,7 @@ public final class JsonExtractFunction implements SQLFunction {
 
     @Override
     public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-        return new StringType();
+        return firstArgumentType;
     }
 
     @Override

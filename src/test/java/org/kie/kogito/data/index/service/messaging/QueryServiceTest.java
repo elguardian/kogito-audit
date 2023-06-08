@@ -40,8 +40,8 @@ public class QueryServiceTest {
 
     @Inject
     protected ObjectMapper mapper;
-    
-    @JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY)
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     class JsonData {
 
         private Integer key;
@@ -65,7 +65,6 @@ public class QueryServiceTest {
 
         JobExecutionLog log2 = new JobExecutionLog();
 
-        
         JsonData data = new JsonData();
         data.key = 1;
         String stringData = mapper.writeValueAsString(data);
@@ -78,6 +77,7 @@ public class QueryServiceTest {
     @Transactional
     public void tear() {
         em.createQuery("DELETE FROM ProcessInstanceLog").executeUpdate();
+        em.createQuery("DELETE FROM JobExecutionLog").executeUpdate();
     }
 
     @Test
@@ -111,13 +111,24 @@ public class QueryServiceTest {
     @Test
     @Transactional
     public void testFilterJsonColumn() {
-        Assertions.assertEquals(1, queryService.execute(JobExecutionLog.class, Filter.emptyFilter()).size());
+        List<JobExecutionLog> logs = queryService.execute(JobExecutionLog.class, Filter.emptyFilter());
+        Assertions.assertEquals(1, logs.size());
     }
-    
+
     @Test
     @Transactional
     public void testJsonColumnSearch() {
-       Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "key"), new ValueExpression(1)));
-       Assertions.assertEquals(1, queryService.execute(JobExecutionLog.class, filter).size());
+        Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "key"), new ValueExpression(1)));
+        List<JobExecutionLog> logs = queryService.execute(JobExecutionLog.class, filter);
+        Assertions.assertEquals(1, logs.size());
     }
+
+    @Test
+    @Transactional
+    public void testJsonColumnSearchEmpty() {
+        Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "key"), new ValueExpression(2)));
+        List<JobExecutionLog> logs = queryService.execute(JobExecutionLog.class, filter);
+        Assertions.assertEquals(0, logs.size());
+    }
+
 }

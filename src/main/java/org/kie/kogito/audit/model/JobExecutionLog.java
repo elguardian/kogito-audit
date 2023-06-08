@@ -16,8 +16,6 @@
 
 package org.kie.kogito.audit.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,8 +25,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -50,30 +46,11 @@ public class JobExecutionLog extends AbstractEntityLog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "jobExecutionHistoryIdSeq")
     private Long id;
-
-    @Column(name="deployment_id")
-    private String deploymentId;
-
-    @Column(name="process_id")
-    private String processId;
-
-    @Column(name="process_instance_id")
-    private String processInstanceId;
-
-    @Column(name = "business_key")
-    private String businessKey;
-
-    @Column(name = "event_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date eventDate;
     
     @Column(name="event_type")
     @Enumerated(EnumType.STRING)
     private LogType eventType;
 
-    @Column(name="event_user")
-    private String eventUser;
-    
     private String message;
 
     @Column(name="execution")
@@ -90,60 +67,13 @@ public class JobExecutionLog extends AbstractEntityLog {
     @Column(name = "response_data", columnDefinition = "json")
     private String responseData;
 
+    
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    public void setDeploymentId(String deploymentId) {
-        this.deploymentId = deploymentId;
-    }
-
-    public String getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public String getBusinessKey() {
-        return businessKey;
-    }
-
-    public void setBusinessKey(String businessKey) {
-        this.businessKey = businessKey;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
-    }
-
-    public LogType getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(LogType eventType) {
-        this.eventType = eventType;
     }
 
     public String getMessage() {
@@ -186,11 +116,11 @@ public class JobExecutionLog extends AbstractEntityLog {
         this.responseData = responseData;
     }
 
-    public String getEventUser() {
-        return eventUser;
+    public LogType getEventType() {
+        return eventType;
     }
-    
-    public void setEventUser(String eventUser) {
-        this.eventUser = eventUser;
+
+    public void setEventType(LogType eventType) {
+        this.eventType = eventType;
     }
 }
