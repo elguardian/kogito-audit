@@ -131,4 +131,11 @@ public class QueryServiceTest {
         Assertions.assertEquals(0, logs.size());
     }
 
+    @Test
+    @Transactional
+    public void testJsonColumnSearchNonExistent() {
+        Filter filter = Filter.filterWithExpression(opEquals(opExtract("requestData", "INTEGER", "nonexistent"), new ValueExpression(1)));
+        List<JobExecutionLog> logs = queryService.execute(JobExecutionLog.class, filter);
+        Assertions.assertEquals(0, logs.size());
+    }
 }
