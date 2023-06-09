@@ -19,7 +19,6 @@ package org.kie.kogito.audit.event;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property="@type")
 public class TaskInstanceVariableEvent {
@@ -32,9 +31,9 @@ public class TaskInstanceVariableEvent {
 
     private String name;
 
-    private JsonNode newValue;
+    private String newValue;
 
-    private JsonNode oldValue;
+    private String oldValue;
     
     private Integer type;
 
@@ -76,19 +75,19 @@ public class TaskInstanceVariableEvent {
         this.name = name;
     }
 
-    public JsonNode getNewValue() {
+    public String getNewValue() {
         return newValue;
     }
 
-    public void setNewValue(JsonNode newValue) {
+    public void setNewValue(String newValue) {
         this.newValue = newValue;
     }
 
-    public JsonNode getOldValue() {
+    public String getOldValue() {
         return oldValue;
     }
 
-    public void setOldValue(JsonNode oldValue) {
+    public void setOldValue(String oldValue) {
         this.oldValue = oldValue;
     }
 

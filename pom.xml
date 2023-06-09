@@ -26,13 +26,10 @@
 			<groupId>io.quarkiverse.reactivemessaging.http</groupId>
 			<artifactId>quarkus-reactive-messaging-http</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy-reactive</artifactId>
@@ -48,11 +45,10 @@
 			<artifactId>quarkus-hibernate-orm</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>io.hypersistence</groupId>
-		    <artifactId>hypersistence-utils-hibernate-55</artifactId>
-		    <version>3.4.1</version>
+			<groupId>io.hypersistence</groupId>
+			<artifactId>hypersistence-utils-hibernate-55</artifactId>
+			<version>3.4.1</version>
 		</dependency>
-
 		<!-- Metrics -->
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -63,8 +59,6 @@
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-smallrye-health</artifactId>
 		</dependency>
-		
-		
 		<!-- kafka stuff -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -75,9 +69,7 @@
 			<artifactId>connect-json</artifactId>
 			<version>3.4.0</version>
 		</dependency>
-		
 		<!--test dependencies -->
-		
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-junit5</artifactId>
@@ -117,6 +109,11 @@
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-jdbc-postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logmanager</groupId>
+			<artifactId>log4j2-jboss-logmanager</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

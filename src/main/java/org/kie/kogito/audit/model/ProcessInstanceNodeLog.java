@@ -28,6 +28,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "ProcessInstanceNodeHistory")
 @SequenceGenerator(name="processInstanceNodeHistoryIdSeq", sequenceName="PROCESS_INSTANCE_NODE_HISTORY_ID_SEQ", allocationSize=1)
@@ -74,7 +76,8 @@ public class ProcessInstanceNodeLog extends AbstractEntityLog {
     @Column(name = "sla_due_date")
     private Date slaDueDate;
     
-    @Column(name="event_data")
+    @Column(name="event_data", columnDefinition = "json")
+    @Type(type = "json")
     private String eventData;
 
     public long getId() {

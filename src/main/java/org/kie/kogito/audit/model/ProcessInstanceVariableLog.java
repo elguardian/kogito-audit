@@ -25,6 +25,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +59,12 @@ public class ProcessInstanceVariableLog extends AbstractEntityLog {
     @Column(name="variable_instance_id")
     private String variableInstanceId;
     
-    @Column(name="new_value")
+    @Column(name="new_value", columnDefinition = "json")
+    @Type(type = "json")
     private String newValue;
     
-    @Column(name="old_value")
+    @Column(name="old_value", columnDefinition = "json")
+    @Type(type = "json")
     private String oldValue;
     
 

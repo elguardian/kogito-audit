@@ -27,10 +27,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "ProcessInstanceHistory")
@@ -44,19 +42,15 @@ public class ProcessInstanceLog extends AbstractEntityLog {
         SLA_VIOLATION
     }
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "processInstanceHistoryIdSeq")
-    private long id;
-
-
-    
+    private long id;   
 
     @Column(name = "event_type", nullable = false)
     private LogType eventType;
 
-    @Column(nullable = true)
+    @Column(columnDefinition = "json")
+    @Type(type = "json")
     private String outcome;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -89,7 +83,6 @@ public class ProcessInstanceLog extends AbstractEntityLog {
     public void setOutcome(String outcome) {
         this.outcome = outcome;
     }
-
 
     public Date getSlaDueDate() {
         return slaDueDate;

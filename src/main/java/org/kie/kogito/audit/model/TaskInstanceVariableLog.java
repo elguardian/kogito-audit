@@ -56,11 +56,11 @@ public class TaskInstanceVariableLog extends AbstractEntityLog {
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
-    private JsonNode newValue;
+    private String newValue;
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
-    private JsonNode oldValue;
+    private String oldValue;
     
     @Enumerated(EnumType.ORDINAL)
     private VariableType type;
@@ -100,19 +100,19 @@ public class TaskInstanceVariableLog extends AbstractEntityLog {
         this.type = type;
     }
 
-    public JsonNode getNewValue() {
+    public String getNewValue() {
         return newValue;
     }
 
-    public void setNewValue(JsonNode newValue) {
+    public void setNewValue(String newValue) {
         this.newValue = newValue;
     }
 
-    public JsonNode getOldValue() {
+    public String getOldValue() {
         return oldValue;
     }
 
-    public void setOldValue(JsonNode oldValue) {
+    public void setOldValue(String oldValue) {
         this.oldValue = oldValue;
     }
 

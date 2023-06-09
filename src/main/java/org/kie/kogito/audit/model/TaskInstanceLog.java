@@ -16,8 +16,6 @@
 
 package org.kie.kogito.audit.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,8 +24,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Table(name = "TaskInstanceHistory")
 @SequenceGenerator(name = "taskInstanceHistoryIdSeq", sequenceName = "TASK_INSTANCE_HISTORY_ID_SEQ")
